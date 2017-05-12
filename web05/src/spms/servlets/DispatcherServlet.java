@@ -12,7 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spms.controls.Controller;
+import spms.controls.LogInController;
+import spms.controls.LogOutController;
 import spms.controls.MemberAddController;
+import spms.controls.MemberDeleteController;
 import spms.controls.MemberListController;
 import spms.controls.MemberUpdateController;
 import spms.vo.Member;
@@ -31,6 +34,7 @@ public class DispatcherServlet extends HttpServlet {
 			ServletContext sc = this.getServletContext();
 			HashMap<String, Object> model = new HashMap<String, Object>();
 			model.put("memberDao", sc.getAttribute("memberDao"));
+			model.put("session", request.getSession());
 			
 			//회원 목록을 처리할 페이지 컨트롤러 준비
 			String pageControllerPath = null;
@@ -69,11 +73,20 @@ public class DispatcherServlet extends HttpServlet {
 							.setEmail(request.getParameter("email")).setName(request.getParameter("name")));
 				}*/
 			} else if ("/member/delete.do".equals(servletPath)) {
-				pageControllerPath = "/member/delete";
+				pageController = new MemberDeleteController();
+				model.put("no", new Integer(request.getParameter("no")));
+				/*pageControllerPath = "/member/delete";*/
 			} else if ("/auth/login.do".equals(servletPath)) {
-				pageControllerPath = "/auth/login";
+				pageController = new LogInController();
+		        if (request.getParameter("email") != null) {
+		        	model.put("loginInfo", new Member()
+		                    .setEmail(request.getParameter("email"))
+		                    .setPassword(request.getParameter("password")));
+		        }
+				/*pageControllerPath = "/auth/login";*/
 			} else if ("/auth/logout.do".equals(servletPath)) {
-				pageControllerPath = "/auth/logout";
+				pageController = new LogOutController();
+				/*pageControllerPath = "/auth/logout";*/
 			}
 
 			/*RequestDispatcher rd = request.getRequestDispatcher(pageControllerPath);

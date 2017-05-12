@@ -20,7 +20,7 @@ public class MemberUpdateController implements Controller {
 			
 			Member member = (Member)model.get("member");
 			
-			memberDao.insert(member);
+			memberDao.update(member);
 			
 			return "redirect:list.do";
 		}
