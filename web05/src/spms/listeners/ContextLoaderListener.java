@@ -13,7 +13,7 @@ import spms.controls.MemberAddController;
 import spms.controls.MemberDeleteController;
 import spms.controls.MemberListController;
 import spms.controls.MemberUpdateController;
-import spms.dao.MemberDao;
+import spms.dao.MySqlMemberDao;
 
 @WebListener
 public class ContextLoaderListener implements ServletContextListener {
@@ -29,7 +29,7 @@ public class ContextLoaderListener implements ServletContextListener {
 
 
 
-			MemberDao memberDao = new MemberDao();
+			MySqlMemberDao memberDao = new MySqlMemberDao();
 			// DataSource를 주입
 			memberDao.setDataSource(ds);
 

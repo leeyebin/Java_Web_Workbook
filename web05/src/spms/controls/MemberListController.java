@@ -3,12 +3,12 @@ package spms.controls;
 import java.util.Map;
 
 
-import spms.dao.MemberDao;
+import spms.dao.MySqlMemberDao;
 
 public class MemberListController implements Controller{
-	MemberDao memberDao;
+	MySqlMemberDao memberDao;
 	//MemberDao를 주입 받기 위한 인스턴스 변수와 setter 메서드를 추가함.
-	public MemberListController setMemberDao(MemberDao memberDao){
+	public MemberListController setMemberDao(MySqlMemberDao memberDao){
 		this.memberDao = memberDao;
 		return this;
 	}
