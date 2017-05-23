@@ -33,32 +33,24 @@ public class DispatcherServlet extends HttpServlet {
 			//Map객체를 준비한다.
 			ServletContext sc = this.getServletContext();
 			HashMap<String, Object> model = new HashMap<String, Object>();
-			model.put("memberDao", sc.getAttribute("memberDao"));
+			//model.put("memberDao", sc.getAttribute("memberDao"));
 			model.put("session", request.getSession());
 			
-			//회원 목록을 처리할 페이지 컨트롤러 준비
-			String pageControllerPath = null;
-			Controller pageController = null;
-			// 서블릿 경로에 따라 조건문을 사용하여 적절한 페이지 컨트롤러를 인클루딩 한다.
-			if ("/member/list.do".equals(servletPath)) {
-				pageController = new MemberListController();
-				/*pageControllerPath = "/member/list";*/
-			} else if ("/member/add.do".equals(servletPath)) {
-				pageController = new MemberAddController();
+			//페이지 컨트롤러는 ServletContext 보관소에 저장되어 있다. 그래서 이 보관소에서 페이지 컨트롤러를 꺼낼 때 서블릿 url을 사용한다.
+			Controller pageController = (Controller)sc.getAttribute(servletPath);
+			
+			//Controller pageController = null;
+
+			if ("/member/add.do".equals(servletPath)) {
+				//pageController = new MemberAddController();
 				if(request.getParameter("email")!=null){
 					model.put("member", new Member()
 							.setEmail(request.getParameter("email"))
 							.setPassword(request.getParameter("password"))
 							.setName(request.getParameter("name")));
 				}
-					
-				/*pageControllerPath = "/member/add";
-				if (request.getParameter("email") != null) { //요청 매개변수로부터 VO 객체 준비
-					request.setAttribute("member", new Member().setEmail(request.getParameter("email"))
-							.setPassword(request.getParameter("password")).setName(request.getParameter("name")));
-				}*/
 			} else if ("/member/update.do".equals(servletPath)) {
-				pageController = new MemberUpdateController();
+				//pageController = new MemberUpdateController();
 		        if (request.getParameter("email") != null) {
 		          model.put("member", new Member()
 		            .setNo(Integer.parseInt(request.getParameter("no")))
@@ -67,32 +59,20 @@ public class DispatcherServlet extends HttpServlet {
 		        }else {
 		              model.put("no", new Integer(request.getParameter("no")));
 		        }
-					/*pageControllerPath = "/member/update";
-				if (request.getParameter("email") != null) { //요청 매개변수로부터 VO 객체 준비
-					request.setAttribute("member", new Member().setNo(Integer.parseInt(request.getParameter("no")))
-							.setEmail(request.getParameter("email")).setName(request.getParameter("name")));
-				}*/
 			} else if ("/member/delete.do".equals(servletPath)) {
-				pageController = new MemberDeleteController();
+				//pageController = new MemberDeleteController();
 				model.put("no", new Integer(request.getParameter("no")));
-				/*pageControllerPath = "/member/delete";*/
 			} else if ("/auth/login.do".equals(servletPath)) {
-				pageController = new LogInController();
+				//pageController = new LogInController();
 		        if (request.getParameter("email") != null) {
 		        	model.put("loginInfo", new Member()
 		                    .setEmail(request.getParameter("email"))
 		                    .setPassword(request.getParameter("password")));
 		        }
-				/*pageControllerPath = "/auth/login";*/
 			} else if ("/auth/logout.do".equals(servletPath)) {
-				pageController = new LogOutController();
-				/*pageControllerPath = "/auth/logout";*/
+				//pageController = new LogOutController();
 			}
 
-			/*RequestDispatcher rd = request.getRequestDispatcher(pageControllerPath);
-			rd.include(request, response);*/
-			
-			//페이지 컨트롤러의 실행, MemberListController가 일반 클래스이기 때문에 메서드를 호출해야 한다.
 			String viewUrl = pageController.execute(model);
 			
 			//Map 객체에 저장된 값을 ServletRequest에 복사
