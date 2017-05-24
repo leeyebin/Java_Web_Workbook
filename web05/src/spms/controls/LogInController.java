@@ -4,11 +4,18 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import spms.bind.DataBinding;
 import spms.dao.MySqlMemberDao;
 import spms.vo.Member;
 
-public class LogInController implements Controller {
+public class LogInController implements Controller, DataBinding {
 	MySqlMemberDao memberDao;
+	
+	public Object[] getDataBinders() {
+		return new Object[]{
+				"loginInfo", spms.vo.Member.class
+		};
+	}
 
 	// MemberDao를 주입 받기 위한 인스턴스 변수와 setter 메서드를 추가함.
 	public LogInController setMemberDao(MySqlMemberDao memberDao) {

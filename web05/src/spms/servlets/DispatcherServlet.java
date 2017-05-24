@@ -11,14 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spms.bind.DataBinding;
+import spms.bind.ServletRequestDataBinder;
 import spms.controls.Controller;
-import spms.controls.LogInController;
-import spms.controls.LogOutController;
-import spms.controls.MemberAddController;
-import spms.controls.MemberDeleteController;
-import spms.controls.MemberListController;
-import spms.controls.MemberUpdateController;
-import spms.vo.Member;
 
 @SuppressWarnings("serial")
 @WebServlet("*.do") //클라이언트 요청 중에서 서블릿 경로 이름이 .do로 끝나는 경우는 DispatcherServlet이 처리하겠다는 의미
@@ -30,52 +25,20 @@ public class DispatcherServlet extends HttpServlet {
 		response.setContentType("text/html; charset=UTF-8");
 		String servletPath = request.getServletPath(); // 서블릿의 경로를 알아내기 위해 사용
 		try {
-			//Map객체를 준비한다.
 			ServletContext sc = this.getServletContext();
 			HashMap<String, Object> model = new HashMap<String, Object>();
-			//model.put("memberDao", sc.getAttribute("memberDao"));
 			model.put("session", request.getSession());
 			
-			//페이지 컨트롤러는 ServletContext 보관소에 저장되어 있다. 그래서 이 보관소에서 페이지 컨트롤러를 꺼낼 때 서블릿 url을 사용한다.
 			Controller pageController = (Controller)sc.getAttribute(servletPath);
 			
-			//Controller pageController = null;
-
-			if ("/member/add.do".equals(servletPath)) {
-				//pageController = new MemberAddController();
-				if(request.getParameter("email")!=null){
-					model.put("member", new Member()
-							.setEmail(request.getParameter("email"))
-							.setPassword(request.getParameter("password"))
-							.setName(request.getParameter("name")));
-				}
-			} else if ("/member/update.do".equals(servletPath)) {
-				//pageController = new MemberUpdateController();
-		        if (request.getParameter("email") != null) {
-		          model.put("member", new Member()
-		            .setNo(Integer.parseInt(request.getParameter("no")))
-		            .setEmail(request.getParameter("email"))
-		            .setName(request.getParameter("name")));
-		        }else {
-		              model.put("no", new Integer(request.getParameter("no")));
-		        }
-			} else if ("/member/delete.do".equals(servletPath)) {
-				//pageController = new MemberDeleteController();
-				model.put("no", new Integer(request.getParameter("no")));
-			} else if ("/auth/login.do".equals(servletPath)) {
-				//pageController = new LogInController();
-		        if (request.getParameter("email") != null) {
-		        	model.put("loginInfo", new Member()
-		                    .setEmail(request.getParameter("email"))
-		                    .setPassword(request.getParameter("password")));
-		        }
-			} else if ("/auth/logout.do".equals(servletPath)) {
-				//pageController = new LogOutController();
+			//매개변수 값을 사용하는 페이지 컨트롤러를 추가하더라도 조건문을 삽입할 필요가 없다. 대신 데이터 준비를 자동으로 수행하는 prepareRequestData()를 호출한다.
+			//DataBinding을 구현했는지 여부를 검사하여, 해당 인터페이스를 구현한 경우에만 prepareRequestData()를 호출하여 페이지컨트롤러를 위한 데이터를 준비한다.
+			if(pageController instanceof DataBinding){
+				prepareRequestData(request, model, (DataBinding)pageController);
 			}
-
+			
 			String viewUrl = pageController.execute(model);
 			
-			//Map 객체에 저장된 값을 ServletRequest에 복사
 			for(String key : model.keySet()){
 				request.setAttribute(key,  model.get(key));
 			}
@@ -93,6 +56,23 @@ public class DispatcherServlet extends HttpServlet {
 			request.setAttribute("error", e);
 			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
 			rd.forward(request, response);
+		}
+	}
+
+	private void prepareRequestData(HttpServletRequest request, HashMap<String, Object> model,
+			DataBinding dataBinding) throws Exception {
+		//컨트롤러에게 필요한 데이터가 무엇인지 묻는다.
+		Object[] dataBinders = dataBinding.getDataBinders();
+		String dataName = null;
+		Class<?> dataType = null;
+		Object dataObj = null;
+		
+		//데이터 이름과 타입을 꺼내기 쉽게 2씩 증가한다.
+		for(int i=0; i<dataBinders.length; i+=2){
+			dataName = (String)dataBinders[i];
+			dataType = (Class<?>)dataBinders[i+1];
+			dataObj = ServletRequestDataBinder.bind(request, dataType, dataName);
+			model.put(dataName, dataObj);
 		}
 	}
 }
