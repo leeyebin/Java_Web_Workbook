@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import spms.bind.DataBinding;
 import spms.bind.ServletRequestDataBinder;
+import spms.context.ApplicationContext;
 import spms.controls.Controller;
+import spms.listeners.ContextLoaderListener;
 
 @SuppressWarnings("serial")
 @WebServlet("*.do") //클라이언트 요청 중에서 서블릿 경로 이름이 .do로 끝나는 경우는 DispatcherServlet이 처리하겠다는 의미
@@ -25,14 +27,18 @@ public class DispatcherServlet extends HttpServlet {
 		response.setContentType("text/html; charset=UTF-8");
 		String servletPath = request.getServletPath(); // 서블릿의 경로를 알아내기 위해 사용
 		try {
-			ServletContext sc = this.getServletContext();
+			//ServletContext sc = this.getServletContext();
+			ApplicationContext ctx = ContextLoaderListener.getApplicationContext();
 			HashMap<String, Object> model = new HashMap<String, Object>();
 			model.put("session", request.getSession());
 			
-			Controller pageController = (Controller)sc.getAttribute(servletPath);
+			//Controller pageController = (Controller)sc.getAttribute(servletPath);
+			System.out.println((Controller)ctx.getBean(servletPath));
+			Controller pageController = (Controller)ctx.getBean(servletPath);
+			if(pageController == null){
+				prepareRequestData(request, model, (DataBinding)pageController);
+			}
 			
-			//매개변수 값을 사용하는 페이지 컨트롤러를 추가하더라도 조건문을 삽입할 필요가 없다. 대신 데이터 준비를 자동으로 수행하는 prepareRequestData()를 호출한다.
-			//DataBinding을 구현했는지 여부를 검사하여, 해당 인터페이스를 구현한 경우에만 prepareRequestData()를 호출하여 페이지컨트롤러를 위한 데이터를 준비한다.
 			if(pageController instanceof DataBinding){
 				prepareRequestData(request, model, (DataBinding)pageController);
 			}
