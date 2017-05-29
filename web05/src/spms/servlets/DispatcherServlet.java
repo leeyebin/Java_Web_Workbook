@@ -33,10 +33,9 @@ public class DispatcherServlet extends HttpServlet {
 			model.put("session", request.getSession());
 			
 			//Controller pageController = (Controller)sc.getAttribute(servletPath);
-			System.out.println((Controller)ctx.getBean(servletPath));
 			Controller pageController = (Controller)ctx.getBean(servletPath);
 			if(pageController == null){
-				prepareRequestData(request, model, (DataBinding)pageController);
+				throw new Exception("요청한 서비스를 찾을 수 없습니다.");
 			}
 			
 			if(pageController instanceof DataBinding){

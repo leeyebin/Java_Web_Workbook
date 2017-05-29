@@ -4,10 +4,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import spms.annotation.Component;
 import spms.bind.DataBinding;
 import spms.dao.MySqlMemberDao;
 import spms.vo.Member;
-
+@Component("/auth/login.do")
 public class LogInController implements Controller, DataBinding {
 	MySqlMemberDao memberDao;
 	

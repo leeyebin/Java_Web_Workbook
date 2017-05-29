@@ -2,9 +2,10 @@ package spms.controls;
 
 import java.util.Map;
 
-
+import spms.annotation.Component;
 import spms.dao.MySqlMemberDao;
 
+@Component("/member/list.do")
 public class MemberListController implements Controller{
 	MySqlMemberDao memberDao;
 	//MemberDao를 주입 받기 위한 인스턴스 변수와 setter 메서드를 추가함.

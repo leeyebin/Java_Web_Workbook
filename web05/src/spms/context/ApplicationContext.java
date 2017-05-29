@@ -4,9 +4,14 @@ import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+
+import org.reflections.Reflections;
+
+import spms.annotation.Component;
 
 // 프로퍼티 파일을 이용한 객체 준비
 public class ApplicationContext {
@@ -26,8 +31,23 @@ public class ApplicationContext {
 		props.load(new FileReader(propertiesPath));
 		
 		prepareObjects(props);
+		prepareAnnotationObjects();
 		injectDependency();
 	}
+	
+	//자바 classpath를 뒤져서 @Component 애노테이션이 붙은 클래스를 찾는다. 그리고 그 객체를 생성하여 객체 테이블에 담는 일을 한다.
+	//Reflections라는 오픈소스 라이브러리를 활용한다.
+	private void prepareAnnotationObjects() 
+		      throws Exception{
+		    Reflections reflector = new Reflections("");
+		    
+		    Set<Class<?>> list = reflector.getTypesAnnotatedWith(Component.class);
+		    String key = null;
+		    for(Class<?> clazz : list) {
+		      key = clazz.getAnnotation(Component.class).value();
+		      objTable.put(key, clazz.newInstance());
+		    }
+		  }
 
 	//프로퍼티 파일의 내용을 로딩했으면 객체를 준비해야한다. prepareObjects()
 	private void prepareObjects(Properties props) throws Exception {
