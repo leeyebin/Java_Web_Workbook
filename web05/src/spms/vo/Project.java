@@ -20,8 +20,9 @@ public class Project {
 	/**
 	 * @param no the no to set
 	 */
-	public void setNo(int no) {
+	public Project setNo(int no) {
 		this.no = no;
+		return this;
 	}
 	/**
 	 * @return the title
@@ -32,8 +33,9 @@ public class Project {
 	/**
 	 * @param title the title to set
 	 */
-	public void setTitle(String title) {
+	public Project setTitle(String title) {
 		this.title = title;
+		return this;
 	}
 	/**
 	 * @return the content
@@ -44,8 +46,9 @@ public class Project {
 	/**
 	 * @param content the content to set
 	 */
-	public void setContent(String content) {
+	public Project setContent(String content) {
 		this.content = content;
+		return this;
 	}
 	/**
 	 * @return the starDate
@@ -56,8 +59,9 @@ public class Project {
 	/**
 	 * @param starDate the starDate to set
 	 */
-	public void setStartDate(Date starDate) {
+	public Project setStartDate(Date starDate) {
 		this.startDate = starDate;
+		return this;
 	}
 	/**
 	 * @return the endDate
@@ -68,8 +72,9 @@ public class Project {
 	/**
 	 * @param endDate the endDate to set
 	 */
-	public void setEndDate(Date endDate) {
+	public Project setEndDate(Date endDate) {
 		this.endDate = endDate;
+		return this;
 	}
 	/**
 	 * @return the state
@@ -80,8 +85,9 @@ public class Project {
 	/**
 	 * @param state the state to set
 	 */
-	public void setState(int state) {
+	public Project setState(int state) {
 		this.state = state;
+		return this;
 	}
 	/**
 	 * @return the createdDate
@@ -92,8 +98,9 @@ public class Project {
 	/**
 	 * @param createdDate the createdDate to set
 	 */
-	public void setCreatedDate(Date createdDate) {
+	public Project setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+		return this;
 	}
 	/**
 	 * @return the tags
@@ -104,8 +111,9 @@ public class Project {
 	/**
 	 * @param tags the tags to set
 	 */
-	public void setTags(String tags) {
+	public Project setTags(String tags) {
 		this.tags = tags;
+		return this;
 	}
 
 	

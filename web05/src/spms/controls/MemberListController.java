@@ -20,6 +20,7 @@ public class MemberListController implements Controller{
 		//MemberDao memberDao = (MemberDao)model.get("memberDao");
 		
 		//페이지 컨트롤러가 작업한 결과물을 Map에 담기
+		System.out.println(memberDao);
 		model.put("members",  memberDao.selectList());
 		//뷰 URL 반환
 		return "/member/MemberList.jsp";
