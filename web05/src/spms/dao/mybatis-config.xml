@@ -2,39 +2,27 @@
 <!DOCTYPE configuration
   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
-
-<!-- mybatis 설정 파일의 루트 엘리먼트 -->
 <configuration>
-	<!-- 데이터베이스 연결 정보처럼 자주 변경될 수 있는 값은 mybatis 설정 파일에 두지 않고 보통 프로퍼티 파일에 저장한다. -->
-	<!-- 그리고 그 프로퍼티 파일을 로딩하려면 properties 태그를 사용한다. 다른경로에 있다면 url 속성을 사용. -->
-	<properties resource="spms/dao/db.properties" />
+	<!-- 로그 출력 기능을 킨다. -->
+	<settings>
+		<!-- name속성과 로그출력기 이름 설정  -->
+		<setting name="logImpl" value="LOG4J" />
+	</settings>
 
-	<!-- SQL 맵퍼파일에서 parameterType, resultType을 지정할 때 별명을 사용할수 있다. -->
 	<typeAliases>
 		<typeAlias type="spms.vo.Project" alias="project" />
 		<typeAlias type="spms.vo.Member" alias="member" />
 	</typeAliases>
 
-	<!-- 데이터베이스 환경 정보를 설정할 때 사용하는 태그이고 이 태그를 이용하면 여러 개의 DB접속 정보를 설정할 수 있다. -->
 	<environments default="development">
-		<!-- 트랜잭션 관리 및 데이터 소스를 설정하는 태그이다. -->
 		<environment id="development">
-			<!-- mybatis의 트랜잭션 관리 방식 2가지 JDBC, MANAGED -->
 			<transactionManager type="JDBC" />
-			
-			<!-- 프로퍼티는 "개별 프로퍼티 설정-프로퍼티 파일에 정의된 것 외에 추가로 정의 할 수 있다. p604", "프로퍼티 값 참조" 방법이 있다. -->
-			<!-- 프로퍼티 값 참조 / 프로퍼티 파일에 저장된 값은 ${} 형식으로 찹조한다. -->
-			<!-- 데이터 소스 설정 UNPOOLED,POOLED, JNDI -->
-			<dataSource type="POOLED">
-				<property name="driver" value="${driver}" />
-				<property name="url" value="${url}" />
-				<property name="username" value="${username}" />
-				<property name="password" value="${password}" />
+			<dataSource type="JNDI">
+				<property name="data_source" value="java:comp/env/jdbc/studydb" />
 			</dataSource>
 		</environment>
 	</environments>
 
-	<!-- SQL 맵퍼 파일의 경로를 설정할 때 사용 -->
 	<mappers>
 		<mapper resource="spms/dao/MySqlProjectDao.xml" />
 	</mappers>
